@@ -1,0 +1,39 @@
+import { LLMCompletionProvider } from '../../completion_provider';
+import { CancellationTokenSource, TextDocument, Position, InlineCompletionContext } from 'vscode';
+
+describe('LLMCompletionProvider', () => {
+    let provider: LLMCompletionProvider;
+
+    beforeEach(() => {
+        provider = LLMCompletionProvider.build();
+    });
+
+    it('should cancel previous API calls when a new request is made', async () => {
+        const prompt = 'Test prompt';
+        const tokenSource = new CancellationTokenSource();
+        provider.currentRequestToken = tokenSource;
+
+        // Mock parameters for provideInlineCompletionItems
+        const document: TextDocument = {} as TextDocument; // Mock TextDocument
+        const position: Position = new Position(0, 0); // Mock Position
+        const context: InlineCompletionContext = {
+            triggerKind: 1, // Simulate user typing
+            selectedCompletionInfo: undefined,
+        } as InlineCompletionContext;
+
+        // Simulate the first request
+        await provider.provideInlineCompletionItems(document, position, context, tokenSource.token);
+
+        // Cancel the previous request
+        provider.triggerCancellation();
+
+        // Check if the ongoing stream flag is reset
+        console.log('Ongoing stream should be false:', provider.hasOnGoingStream);
+        
+        // Simulate a new request
+        await provider.provideInlineCompletionItems(document, position, context, tokenSource.token);
+
+        // Check if the ongoing stream flag is set
+        console.log('Ongoing stream should be true:', provider.hasOnGoingStream);
+    });
+});

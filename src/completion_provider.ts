@@ -154,6 +154,11 @@ export class LLMCompletionProvider implements InlineCompletionItemProvider {
     return { shouldStop: true, trimmedResponse };
   }
 
+  /** Public method to trigger cancellation */
+  public triggerCancellation() {
+    this.stopOngoingStream();
+  }
+
   /** Stop running LLM completion */
   private stopOngoingStream() {
     if (this.currentRequestToken) {
@@ -198,11 +203,14 @@ export class LLMCompletionProvider implements InlineCompletionItemProvider {
     token: CancellationToken
 ): Promise<InlineCompletionItem[] | InlineCompletionList | null | undefined> {
     // Cancel the previous request if it exists
-    this.stopOngoingStream();
+    this.stopOngoingStream(); // Cancel any ongoing requests
 
     // Create a new cancellation token for the current request
     this.currentRequestToken = new CancellationTokenSource();
-    const currentToken = this.currentRequestToken.token;
+
+    // Set the flag to indicate an ongoing stream only after a new request is initiated
+    this.hasOnGoingStream = true; // Set the flag to indicate an ongoing stream
+    console.log('New request initiated, ongoing stream set to true');
 
     // Check if the user is typing to request new completions
     const isUserTyping = context.triggerKind === InlineCompletionTriggerKind.Automatic;
