@@ -90,14 +90,13 @@ export class LLMCompletionProvider implements InlineCompletionItemProvider {
 
   /** Execute completion */
   public async getCompletion(prompt: string, stop: string[] = []) {
-    return await this.client.completions.create({
+    const response = await this.client.completions.create({
       model: this.models[0]?.model || 'NONE', // Set the model dynamically
       prompt,
       stream: true,
       temperature: workspace
         .getConfiguration('localcompletion')
         .get('temperature'),
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       max_tokens: workspace
         .getConfiguration('localcompletion')
         .get('max_tokens'),
@@ -109,6 +108,15 @@ export class LLMCompletionProvider implements InlineCompletionItemProvider {
           .get('stop_sequences', []),
       ],
     });
+
+    // Process the streamed response to extract completion texts
+    const completionTexts: string[] = [];
+    for await (const part of response) {
+      if (part.choices && Array.isArray(part.choices)) {
+        completionTexts.push(...part.choices.map((choice: { text: string }) => choice.text));
+      }
+    }
+    return completionTexts.length > 0 ? completionTexts : ['No completions found.'];
   }
 
   /** Check if inline completion should be skipped */
@@ -237,6 +245,25 @@ export class LLMCompletionProvider implements InlineCompletionItemProvider {
       }
     }
 
+    // Check if the user is typing to request new completions
+    const isUserTyping = context.triggerKind === InlineCompletionTriggerKind.Automatic;
+    if (isUserTyping) {
+        // Logic to request new completions based on user input
+        // This can be adjusted based on specific conditions or thresholds
+        const previousResponses = this.lastResponses.get(activeFile);
+        if (previousResponses && !isSingleLineCompletion) {
+            return new InlineCompletionList(
+                previousResponses.map(
+                    (res) =>
+                        new InlineCompletionItem(
+                            res,
+                            new Range(position.line, 0, position.line, position.character)
+                        )
+                )
+            );
+        }
+    }
+
     // Get prompt depending on the configuration
     const prompt = workspace
       .getConfiguration('localcompletion')
@@ -303,11 +330,14 @@ export class LLMCompletionProvider implements InlineCompletionItemProvider {
     this.lastResponses.add(activeFile, completion);
     this.statusBarItem.setInactive();
 
-    return new InlineCompletionList([
+    const completions = this.lastResponses.get(activeFile) || [];
+    const inlineCompletionItems = completions.map((res) => 
       new InlineCompletionItem(
-        activeFile + completion,
-        new Range(0, 0, position.line, position.character)
-      ),
-    ]);
+        res,
+        new Range(position.line, 0, position.line, position.character)
+      )
+    );
+
+    return new InlineCompletionList(inlineCompletionItems);
   }
 }
