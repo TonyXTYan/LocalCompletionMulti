@@ -89,8 +89,8 @@ export class LLMCompletionProvider implements InlineCompletionItemProvider {
   }
 
   /** Execute completion */
-  public async getCompletion(prompt: string, stop: string[] = []) {
-    const response = await this.client.completions.create({
+  public async getCompletion(prompt: string, stop: string[] = []): Promise<Stream<OpenAI.Completions.Completion>> {
+    return await this.client.completions.create({
       model: this.models[0]?.model || 'NONE', // Set the model dynamically
       prompt,
       stream: true,
@@ -107,16 +107,7 @@ export class LLMCompletionProvider implements InlineCompletionItemProvider {
           .getConfiguration('localcompletion')
           .get('stop_sequences', []),
       ],
-    });
-
-    // Process the streamed response to extract completion texts
-    const completionTexts: string[] = [];
-    for await (const part of response) {
-      if (part.choices && Array.isArray(part.choices)) {
-        completionTexts.push(...part.choices.map((choice: { text: string }) => choice.text));
-      }
-    }
-    return completionTexts.length > 0 ? completionTexts : ['No completions found.'];
+    }) as Stream<OpenAI.Completions.Completion>;
   }
 
   /** Check if inline completion should be skipped */
@@ -302,22 +293,23 @@ export class LLMCompletionProvider implements InlineCompletionItemProvider {
       .getConfiguration('localcompletion')
       .get('max_lines', 5);
 
-    for await (const part of this.onGoingStream) {
-      completion +=
-        part.choices?.[0]?.text ||
-        //(part as unknown as { content: string }).content ||
-        '';
+    if (this.onGoingStream) {
+      for await (const part of this.onGoingStream) {
+        completion +=
+          part.choices?.[0]?.text ||
+          '';
 
-      const { shouldStop, trimmedResponse } = this.shouldStop(
-        completion,
-        maxLines
-      );
-      if (shouldStop) {
-        // Stop completion
-        this.stopOngoingStream();
+        const { shouldStop, trimmedResponse } = this.shouldStop(
+          completion,
+          maxLines
+        );
+        if (shouldStop) {
+          // Stop completion
+          this.stopOngoingStream();
 
-        completion = trimmedResponse;
-        break;
+          completion = trimmedResponse;
+          break;
+        }
       }
     }
     this.hasOnGoingStream = false;

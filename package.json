@@ -17,7 +17,8 @@
     "Snippets"
   ],
   "activationEvents": [
-    "onStartupFinished"
+    "onStartupFinished",
+    "onCommand:localcompletion.select_endpoint"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -175,4 +176,3 @@
     "simple-git": "^3.22.0"
   }
 }
-
