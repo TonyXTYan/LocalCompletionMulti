@@ -94,7 +94,7 @@ export class ContextSelectionProvider implements TreeDataProvider<ContextItem> {
   ) {
     if (gitignore === undefined) {
       gitignore = workspace
-        .getConfiguration('localcompletion')
+        .getConfiguration('multicompletion')
         .get<boolean>('context_gitignore');
     }
 
@@ -213,7 +213,7 @@ export class ContextSelectionView implements Disposable {
 
   private updateSelectedContext(contextItems: ContextItem[]) {
     const config = workspace
-      .getConfiguration('localcompletion')
+      .getConfiguration('multicompletion')
       .get<string[]>('context_files', []);
 
     contextItems.forEach((item) => {
@@ -232,7 +232,7 @@ export class ContextSelectionView implements Disposable {
     });
 
     workspace
-      .getConfiguration('localcompletion')
+      .getConfiguration('multicompletion')
       .update('context_files', config, ConfigurationTarget.Workspace);
   }
 

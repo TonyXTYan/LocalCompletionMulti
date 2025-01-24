@@ -137,7 +137,7 @@ export function getContextFiles() {
   }
 
   return workspace
-    .getConfiguration('localcompletion')
+    .getConfiguration('multicompletion')
     .get<string[]>('context_files', [])
     .map((path) => `${workspaceRoot}/${path}`);
 }
@@ -158,12 +158,12 @@ export function removeContextFile(path: string) {
   }
 
   const contextFiles = workspace
-    .getConfiguration('localcompletion')
+    .getConfiguration('multicompletion')
     .get<string[]>('context_files', []);
 
   contextFiles.splice(contextFiles.indexOf(path), 1);
 
   workspace
-    .getConfiguration('localcompletion')
+    .getConfiguration('multicompletion')
     .update('context_files', contextFiles);
 }

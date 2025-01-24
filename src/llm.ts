@@ -7,7 +7,7 @@ export class LLM {
 
   constructor() {
     this.apiEndpoint = workspace
-      .getConfiguration('localcompletion')
+      .getConfiguration('multicompletion')
       .get('active_endpoint', this.apiEndpoint);
 
     this.client = new OpenAI({
@@ -28,15 +28,15 @@ export class LLM {
       stream: true,
       temperature:
         temp ||
-        workspace.getConfiguration('localcompletion').get('temperature'),
+        workspace.getConfiguration('multicompletion').get('temperature'),
       // eslint-disable-next-line @typescript-eslint/naming-convention
       max_tokens:
         maxTokens ||
-        workspace.getConfiguration('localcompletion').get('max_tokens'),
+        workspace.getConfiguration('multicompletion').get('max_tokens'),
       stop: [
         ...stop,
         ...workspace
-          .getConfiguration('localcompletion')
+          .getConfiguration('multicompletion')
           .get('stop_sequences', []),
       ],
     });
@@ -58,15 +58,15 @@ export class LLM {
       stream: true,
       temperature:
         temp ||
-        workspace.getConfiguration('localcompletion').get('temperature'),
+        workspace.getConfiguration('multicompletion').get('temperature'),
       // eslint-disable-next-line @typescript-eslint/naming-convention
       max_tokens:
         maxTokens ||
-        workspace.getConfiguration('localcompletion').get('max_tokens'),
+        workspace.getConfiguration('multicompletion').get('max_tokens'),
       stop: [
         ...stop,
         ...workspace
-          .getConfiguration('localcompletion')
+          .getConfiguration('multicompletion')
           .get('stop_sequences', []),
       ],
     });

@@ -2,12 +2,12 @@ import { StatusBarAlignment, StatusBarItem, ThemeColor, window } from 'vscode';
 
 export class CompletionStatusBarItem {
   private statusBarItem: StatusBarItem;
-  private baseText = 'LocalCompletion';
+  private baseText = 'multicompletion';
 
   constructor() {
     this.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right);
     this.statusBarItem.text = `$(copilot) ${this.baseText}`;
-    this.statusBarItem.command = 'localcompletion.regenerate';
+    this.statusBarItem.command = 'multicompletion.regenerate';
     this.statusBarItem.show();
   }
 

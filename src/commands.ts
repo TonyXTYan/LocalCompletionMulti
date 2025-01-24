@@ -31,7 +31,7 @@ function toggle() {
   }
 
   window.showInformationMessage(
-    `LocalCompletion ${!enabled ? 'enabled' : 'disabled'}!`
+    `multicompletion ${!enabled ? 'enabled' : 'disabled'}!`
   );
   console.debug("Toggled 'inlineSuggest.enabled'");
 }
@@ -46,46 +46,46 @@ function refreshContextView() {
 
 function applyContextGitignore() {
   workspace
-    .getConfiguration('localcompletion')
+    .getConfiguration('multicompletion')
     .update('context_gitignore', true, ConfigurationTarget.Global)
     .then(() =>
-      vscommands.executeCommand('localcompletion.refresh_context_view')
+      vscommands.executeCommand('multicompletion.refresh_context_view')
     );
   vscommands.executeCommand(
     'setContext',
-    'localcompletion:useContextGitignore',
+    'multicompletion:useContextGitignore',
     true
   );
 }
 
 function disableContextGitignore() {
   workspace
-    .getConfiguration('localcompletion')
+    .getConfiguration('multicompletion')
     .update('context_gitignore', false, ConfigurationTarget.Global)
     .then(() =>
-      vscommands.executeCommand('localcompletion.refresh_context_view')
+      vscommands.executeCommand('multicompletion.refresh_context_view')
     );
   vscommands.executeCommand(
     'setContext',
-    'localcompletion:useContextGitignore',
+    'multicompletion:useContextGitignore',
     false
   );
 }
 
 export const commands = [
-  vscommands.registerCommand('localcompletion.select_endpoint', setEndpoint),
-  vscommands.registerCommand('localcompletion.toggle', toggle),
-  vscommands.registerCommand('localcompletion.regenerate', regenerate),
+  vscommands.registerCommand('multicompletion.select_endpoint', setEndpoint),
+  vscommands.registerCommand('multicompletion.toggle', toggle),
+  vscommands.registerCommand('multicompletion.regenerate', regenerate),
   vscommands.registerCommand(
-    'localcompletion.refresh_context_view',
+    'multicompletion.refresh_context_view',
     refreshContextView
   ),
   vscommands.registerCommand(
-    'localcompletion.apply_context_gitignore',
+    'multicompletion.apply_context_gitignore',
     applyContextGitignore
   ),
   vscommands.registerCommand(
-    'localcompletion.disable_context_gitignore',
+    'multicompletion.disable_context_gitignore',
     disableContextGitignore
   ),
 ];

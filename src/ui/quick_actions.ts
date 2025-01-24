@@ -20,10 +20,10 @@ export class EndpointPicker {
   constructor() {
     this.completionProvider = LLMCompletionProvider.instance();
     this.endpoints = workspace
-      .getConfiguration('localcompletion')
+      .getConfiguration('multicompletion')
       .get('endpoints', [this.completionProvider.apiEndpoint]);
     const activeEndpoint = workspace
-      .getConfiguration('localcompletion')
+      .getConfiguration('multicompletion')
       .get('active_endpoint', this.completionProvider.apiEndpoint);
 
     this.quickPick = this.buildQuickPick(this.endpoints, activeEndpoint);
@@ -71,7 +71,7 @@ export class EndpointPicker {
 
     const activeEndpoint = (item as QuickPickItem & { value: string }).value;
     workspace
-      .getConfiguration('localcompletion')
+      .getConfiguration('multicompletion')
       .update('active_endpoint', activeEndpoint, ConfigurationTarget.Global);
     this.completionProvider.updateSettings();
   }
@@ -87,10 +87,10 @@ export class EndpointPicker {
     }
 
     workspace
-      .getConfiguration('localcompletion')
+      .getConfiguration('multicompletion')
       .update('endpoints', this.endpoints, ConfigurationTarget.Global);
     workspace
-      .getConfiguration('localcompletion')
+      .getConfiguration('multicompletion')
       .update('active_endpoint', endpoint, ConfigurationTarget.Global);
     this.completionProvider.updateSettings();
   }

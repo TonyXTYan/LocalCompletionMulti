@@ -1,4 +1,4 @@
-# LocalCompletion
+# multicompletion
 
 Local LLM based code completion like Copilot.
 
@@ -21,18 +21,18 @@ Local LLM based code completion like Copilot.
 
 ## Extension Settings
 
-- `localcompletion.active_endpoint`: The URL of the API which is used for generating the code completion
-- `localcompletion.endpoints`: List of URL endpoints
-- `localcompletion.temperature`: Temperature of the LLM
-- `localcompletion.max_tokens`: Maximum number of tokens in the response
-- `localcompletion.stop_sequences`: Additional stop sequences (max. 2)
-- `localcompletion.reduce_calls`: Reduce API calls with various strategies (e.g. skip completion if last symbol was a letter)
-- `localcompletion.skip_autocomplete_widget`: Skip completion if autocomplete widget is active
-- `localcompletion.completion_timeout`: Minimum time between keystrokes (in ms) before sending a completion request (Reduces API calls, which are closed immediately after)
-- `localcompletion.max_lines`: Maximum number of lines in the response (empty lines are ignored)
-- `localcompletion.add_visible_files`: Add all visible files to completion context
-- `localcompletion.context_files`: List of files to add to completion context (should usually not be edited manually)
-- `localcompletion.context_gitignore`: Whether to ignore files in the `.gitignore` in the context selection view
+- `multicompletion.active_endpoint`: The URL of the API which is used for generating the code completion
+- `multicompletion.endpoints`: List of URL endpoints
+- `multicompletion.temperature`: Temperature of the LLM
+- `multicompletion.max_tokens`: Maximum number of tokens in the response
+- `multicompletion.stop_sequences`: Additional stop sequences (max. 2)
+- `multicompletion.reduce_calls`: Reduce API calls with various strategies (e.g. skip completion if last symbol was a letter)
+- `multicompletion.skip_autocomplete_widget`: Skip completion if autocomplete widget is active
+- `multicompletion.completion_timeout`: Minimum time between keystrokes (in ms) before sending a completion request (Reduces API calls, which are closed immediately after)
+- `multicompletion.max_lines`: Maximum number of lines in the response (empty lines are ignored)
+- `multicompletion.add_visible_files`: Add all visible files to completion context
+- `multicompletion.context_files`: List of files to add to completion context (should usually not be edited manually)
+- `multicompletion.context_gitignore`: Whether to ignore files in the `.gitignore` in the context selection view
 
 ## Known Issues
 

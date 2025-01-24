@@ -62,15 +62,17 @@ export class LLMCompletionProvider implements InlineCompletionItemProvider {
 
   /** Update variables which depend on extension settings. Should be called if the settings are changed */
   updateSettings() {
+    console.log('Updating settings...');
     this.enabled = workspace
       .getConfiguration('editor')
       .get('inlineSuggest.enabled', true);
     this.apiEndpoint = workspace
-      .getConfiguration('localcompletion')
+      .getConfiguration('multicompletion')
       .get('active_endpoint', this.apiEndpoint);
 
+    console.log(`Settings updated: enabled=${this.enabled}, apiEndpoint=${this.apiEndpoint}`);
     this.client = new OpenAI({
-      apiKey: workspace.getConfiguration('localcompletion').get('api_key', 'NONE'),
+      apiKey: workspace.getConfiguration('multicompletion').get('api_key', 'NONE'),
       baseURL: this.apiEndpoint,
     });
   }
@@ -78,7 +80,7 @@ export class LLMCompletionProvider implements InlineCompletionItemProvider {
   /** Async sleep */
   async completionTimeout(): Promise<unknown> {
     const ms = workspace
-      .getConfiguration('localcompletion')
+      .getConfiguration('multicompletion')
       .get('completion_timeout', 0);
 
     if (ms <= 0) {
@@ -95,16 +97,16 @@ export class LLMCompletionProvider implements InlineCompletionItemProvider {
       prompt,
       stream: true,
       temperature: workspace
-        .getConfiguration('localcompletion')
+        .getConfiguration('multicompletion')
         .get('temperature'),
       max_tokens: workspace
-        .getConfiguration('localcompletion')
+        .getConfiguration('multicompletion')
         .get('max_tokens'),
       stop: [
         '\n\n\n',
         ...stop,
         ...workspace
-          .getConfiguration('localcompletion')
+          .getConfiguration('multicompletion')
           .get('stop_sequences', []),
       ],
     }) as Stream<OpenAI.Completions.Completion>;
@@ -120,13 +122,13 @@ export class LLMCompletionProvider implements InlineCompletionItemProvider {
     if (
       context.selectedCompletionInfo !== undefined &&
       workspace
-        .getConfiguration('localcompletion')
+        .getConfiguration('multicompletion')
         .get('skip_autocomplete_widget')
     ) {
       console.debug('Skip completion because Autocomplete widget is visible');
       console.debug(
         workspace
-          .getConfiguration('localcompletion')
+          .getConfiguration('multicompletion')
           .get('skip_autocomplete_widget')
       );
       return true;
@@ -202,7 +204,7 @@ export class LLMCompletionProvider implements InlineCompletionItemProvider {
     // because ASYNC and PROMISE
   ): ProviderResult<InlineCompletionItem[] | InlineCompletionList> {
     const reduceCalls = workspace
-      .getConfiguration('localcompletion')
+      .getConfiguration('multicompletion')
       .get('reduce_calls', true);
 
     const promptBuilder = new PromptBuilder(document, position);
@@ -257,7 +259,7 @@ export class LLMCompletionProvider implements InlineCompletionItemProvider {
 
     // Get prompt depending on the configuration
     const prompt = workspace
-      .getConfiguration('localcompletion')
+      .getConfiguration('multicompletion')
       .get('add_visible_files', false)
       ? await promptBuilder.getPrompt()
       : activeFile;
@@ -290,7 +292,7 @@ export class LLMCompletionProvider implements InlineCompletionItemProvider {
 
     let completion = '';
     const maxLines = workspace
-      .getConfiguration('localcompletion')
+      .getConfiguration('multicompletion')
       .get('max_lines', 5);
 
     if (this.onGoingStream) {

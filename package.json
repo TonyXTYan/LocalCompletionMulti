@@ -1,12 +1,12 @@
 {
-  "name": "localcompletion",
-  "displayName": "LocalCompletion",
+  "name": "multicompletion",
+  "displayName": "multicompletion",
   "description": "Local LLM based code completion like Copilot",
   "publisher": "lufixSch",
   "version": "0.3.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lufixSch/LocalCompletion"
+    "url": "https://github.com/lufixSch/multicompletion"
   },
   "icon": "static/minimal_logo_dark.png",
   "engines": {
@@ -17,8 +17,7 @@
     "Snippets"
   ],
   "activationEvents": [
-    "onStartupFinished",
-    "onCommand:localcompletion.select_endpoint"
+    "onStartupFinished"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -26,124 +25,143 @@
       "explorer": [
         {
           "id": "contextSelection",
-          "name": "LocalCompletion Context"
+          "name": "multicompletion Context"
         }
       ]
     },
     "menus": {
       "view/title": [
         {
-          "command": "localcompletion.refresh_context_view",
+          "command": "multicompletion.refresh_context_view",
           "when": "view == contextSelection",
           "group": "navigation"
         },
         {
-          "command": "localcompletion.apply_context_gitignore",
-          "when": "view == contextSelection && !localcompletion:useContextGitignore"
+          "command": "multicompletion.apply_context_gitignore",
+          "when": "view == contextSelection && !multicompletion:useContextGitignore"
         },
         {
-          "command": "localcompletion.disable_context_gitignore",
-          "when": "view == contextSelection && localcompletion:useContextGitignore"
+          "command": "multicompletion.disable_context_gitignore",
+          "when": "view == contextSelection && multicompletion:useContextGitignore"
         }
       ]
     },
     "commands": [
       {
-        "command": "localcompletion.select_endpoint",
-        "title": "LocalCompletion: Change API Endpoint"
+        "command": "multicompletion.select_endpoint",
+        "title": "multicompletion: Change API Endpoint"
       },
       {
-        "command": "localcompletion.toggle",
-        "title": "LocalCompletion: Toggle code completion on/off"
+        "command": "multicompletion.toggle",
+        "title": "multicompletion: Toggle code completion on/off"
       },
       {
-        "command": "localcompletion.regenerate",
-        "title": "LocalCompletion: Regenerate completion"
+        "command": "multicompletion.regenerate",
+        "title": "multicompletion: Regenerate completion"
       },
       {
-        "command": "localcompletion.refresh_context_view",
-        "title": "LocalCompletion: Refresh context view",
+        "command": "multicompletion.refresh_context_view",
+        "title": "multicompletion: Refresh context view",
         "icon": "$(extensions-refresh)"
       },
       {
-        "command": "localcompletion.apply_context_gitignore",
-        "title": "LocalCompletion: Apply .gitignore to context",
+        "command": "multicompletion.apply_context_gitignore",
+        "title": "multicompletion: Apply .gitignore to context",
         "shortTitle": "  Apply .gitignore to context"
       },
       {
-        "command": "localcompletion.disable_context_gitignore",
-        "title": "LocalCompletion: Disable .gitignore to context",
+        "command": "multicompletion.disable_context_gitignore",
+        "title": "multicompletion: Disable .gitignore to context",
         "shortTitle": "✓ Apply .gitignore to context"
       }
     ],
-    "configuration": {
-      "localcompletion": {
-        "type": "object",
-        "title": "LocalCompletion",
+    "configuration": [
+      {
+
+        "title": "multicompletion",
         "properties": {
-          "active_endpoint": {
+          "multicompletion.active_endpoint": {
+            "description": "The URL of any OpenAI compatible API which is then used for generating the code completion",
+
+
+
+
             "type": "string",
-            "default": "http://localhost:5000/v1",
-            "description": "The URL of any OpenAI compatible API which is then used for generating the code completion"
+            "default": "http://localhost:5000/v1"
+
+
+
+
+
+
           },
-          "api_key": {
-            "type": "string",
-            "default": "NONE",
-            "description": "API key for OpenAI"
-          },
-          "context_gitignore": {
-            "type": "boolean",
-            "default": true,
-            "description": "Whether to ignore files in the gitignore for context generation"
-          },
-          "context_files": {
+          "multicompletion.endpoints": {
+            "description": "List of possible API endpoints in order to make switching easier",
             "type": "array",
-            "default": [],
-            "description": "List of files to add to completion context (should usually not be edited manually)"
+            "default": [
+              "http://localhost:5000/v1"
+            ]
           },
-          "temperature": {
+          "multicompletion.temperature": {
+            "description": "Temperature of the LLM",
             "type": "number",
-            "default": 0.5,
-            "description": "Temperature of the LLM"
+            "default": 0.5
+
           },
-          "max_tokens": {
+          "multicompletion.max_tokens": {
+            "description": "Maximum number of tokens in the response",
             "type": "number",
-            "default": 300,
-            "description": "Maximum number of tokens in the response"
+            "default": 300
+
           },
-          "stop_sequences": {
+          "multicompletion.stop_sequences": {
+            "description": "Additional stop sequences (max. 2)",
             "type": "array",
-            "default": [],
-            "description": "Additional stop sequences (max. 2)"
+            "default": []
+
           },
-          "max_lines": {
+          "multicompletion.max_lines": {
+            "description": "Maximum number of lines in the response",
             "type": "number",
-            "default": 5,
-            "description": "Maximum number of lines in the response"
+            "default": 5
+
           },
-          "reduce_calls": {
+          "multicompletion.reduce_calls": {
+            "description": "Reduce API calls with various strategies",
             "type": "boolean",
-            "default": true,
-            "description": "Reduce API calls with various strategies"
+            "default": true
+
           },
-          "skip_autocomplete_widget": {
+          "multicompletion.skip_autocomplete_widget": {
+            "description": "Skip completion if autocomplete widget is active",
             "type": "boolean",
-            "default": false,
-            "description": "Skip completion if autocomplete widget is active"
+            "default": false
+
           },
-          "completion_timeout": {
+          "multicompletion.completion_timeout": {
+            "description": "Minimum time between keystrokes (in ms) before sending a completion request (Reduces API calls, which are closed immedietly after)",
             "type": "number",
-            "default": 300,
-            "description": "Minimum time between keystrokes (in ms) before sending a completion request"
+            "default": 300
           },
-          "add_visible_files": {
+          "multicompletion.add_visible_files": {
+            "description": "Add all visible files to completion context",
             "type": "boolean",
-            "default": true,
-            "description": "Add all visible files to completion context"
+            "default": true
+          },
+          "multicompletion.context_files": {
+            "description": "List of files to add to completion context (should ussually not be edited manually)",
+            "type": "array",
+            "default": []
+          },
+          "multicompletion.context_gitignore": {
+            "description": "Whether to ignore files in the gitignore for context generation",
+            "type": "boolean",
+            "default": true
+
           }
         }
       }
-    }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
@@ -159,7 +177,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.2",
     "@types/node": "18.x",
-    "@types/vscode": "^1.96.0",
+    "@types/vscode": "^1.83.0",
     "@typescript-eslint/eslint-plugin": "^6.7.3",
     "@typescript-eslint/parser": "^6.7.3",
     "@vscode/test-electron": "^2.3.4",
@@ -172,7 +190,8 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "openai": "^4.80.1",
+    "openai": "^4.14.1",
     "simple-git": "^3.22.0"
   }
 }
+
