@@ -21,6 +21,9 @@ import { CompletionStatusBarItem } from './ui/status_bar_item';
 
 export class LLMCompletionProvider implements InlineCompletionItemProvider {
   apiEndpoint = 'http://localhost:5001/v1';
+  models: Array<{ model: string; onSecondOrMoreCompute?: any }> = [];
+  maxGen = 100;
+  timeoutCut = 600000; // 600 seconds
   enabled = true;
 
   //@ts-ignore
@@ -67,7 +70,7 @@ export class LLMCompletionProvider implements InlineCompletionItemProvider {
       .get('active_endpoint', this.apiEndpoint);
 
     this.client = new OpenAI({
-      apiKey: 'NONE',
+      apiKey: workspace.getConfiguration('localcompletion').get('api_key', 'NONE'),
       baseURL: this.apiEndpoint,
     });
   }
@@ -86,9 +89,9 @@ export class LLMCompletionProvider implements InlineCompletionItemProvider {
   }
 
   /** Execute completion */
-  private async getCompletion(prompt: string, stop: string[] = []) {
+  public async getCompletion(prompt: string, stop: string[] = []) {
     return await this.client.completions.create({
-      model: 'NONE',
+      model: this.models[0]?.model || 'NONE', // Set the model dynamically
       prompt,
       stream: true,
       temperature: workspace
@@ -178,7 +181,7 @@ export class LLMCompletionProvider implements InlineCompletionItemProvider {
     );
 
     // Check line ending for only '' or '\n' to trigger inline completion
-    const isSingleLineCompletion = lineEnding.trim() !== '';
+    const isSingleLineCompletion = lineEnding?.trim() !== '';
 
     if (!isSingleLineCompletion) {
       lineEnding = document.getText(

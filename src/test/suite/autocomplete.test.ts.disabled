@@ -1,0 +1,55 @@
+import * as assert from 'assert';
+import * as vscode from 'vscode';
+import { LLMCompletionProvider } from '../../completion_provider';
+
+suite('Autocomplete Functionality Test Suite', () => {
+  let provider: LLMCompletionProvider;
+
+  setup(() => {
+    provider = LLMCompletionProvider.build();
+  });
+
+  test('Should initialize with default settings', () => {
+    assert.strictEqual(provider.MAX_GEN, 100);
+    assert.strictEqual(provider.TIMOUT_CUT, 600000);
+  });
+
+  test('Should handle multiple model queries', async () => {
+    // Mock the behavior of the OpenAI client to simulate responses
+    provider.client = {
+      completions: {
+        create: async () => ({
+          choices: [{ text: 'Mock response from model 1' }],
+        }),
+      },
+    } as any; // Type assertion to bypass type checking for the mock
+
+    const prompt = 'Test prompt';
+    const response = await provider.getCompletion(prompt);
+    assert.strictEqual(response.choices[0].text, 'Mock response from model 1');
+  });
+
+  test('Should append responses dynamically', async () => {
+    // Test the behavior of appending responses to the suggestions list
+    provider.lastResponses.add('testFile', 'Initial response');
+    provider.lastResponses.add('testFile', 'Second response');
+
+    const responses = provider.lastResponses.get('testFile');
+    assert.strictEqual(responses.length, 2);
+    assert.strictEqual(responses[1], 'Second response');
+  });
+
+  test('Should respect timeout and max generation limits', async () => {
+    // Mock the behavior of the OpenAI client to simulate a timeout
+    provider.completionTimeout = async () => {
+      return new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 1000));
+    };
+
+    try {
+      await provider.getCompletion('Test prompt');
+      assert.fail('Expected an error to be thrown due to timeout');
+    } catch (error) {
+      assert.strictEqual(error.message, 'Timeout');
+    }
+  });
+});

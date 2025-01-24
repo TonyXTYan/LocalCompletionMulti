@@ -75,75 +75,74 @@
         "shortTitle": "✓ Apply .gitignore to context"
       }
     ],
-    "configuration": [
-      {
+    "configuration": {
+      "localcompletion": {
+        "type": "object",
         "title": "LocalCompletion",
         "properties": {
-          "localcompletion.active_endpoint": {
-            "description": "The URL of any OpenAI compatible API which is then used for generating the code completion",
+          "active_endpoint": {
             "type": "string",
-            "default": "http://localhost:5000/v1"
+            "default": "http://localhost:5000/v1",
+            "description": "The URL of any OpenAI compatible API which is then used for generating the code completion"
           },
-          "localcompletion.endpoints": {
-            "description": "List of possible API endpoints in order to make switching easier",
+          "api_key": {
+            "type": "string",
+            "default": "NONE",
+            "description": "API key for OpenAI"
+          },
+          "context_gitignore": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to ignore files in the gitignore for context generation"
+          },
+          "context_files": {
             "type": "array",
-            "default": [
-              "http://localhost:5000/v1"
-            ]
+            "default": [],
+            "description": "List of files to add to completion context (should usually not be edited manually)"
           },
-          "localcompletion.temperature": {
-            "description": "Temperature of the LLM",
+          "temperature": {
             "type": "number",
-            "default": 0.5
+            "default": 0.5,
+            "description": "Temperature of the LLM"
           },
-          "localcompletion.max_tokens": {
-            "description": "Maximum number of tokens in the response",
+          "max_tokens": {
             "type": "number",
-            "default": 300
+            "default": 300,
+            "description": "Maximum number of tokens in the response"
           },
-          "localcompletion.stop_sequences": {
-            "description": "Additional stop sequences (max. 2)",
+          "stop_sequences": {
             "type": "array",
-            "default": []
+            "default": [],
+            "description": "Additional stop sequences (max. 2)"
           },
-          "localcompletion.max_lines": {
-            "description": "Maximum number of lines in the response",
+          "max_lines": {
             "type": "number",
-            "default": 5
+            "default": 5,
+            "description": "Maximum number of lines in the response"
           },
-          "localcompletion.reduce_calls": {
-            "description": "Reduce API calls with various strategies",
+          "reduce_calls": {
             "type": "boolean",
-            "default": true
+            "default": true,
+            "description": "Reduce API calls with various strategies"
           },
-          "localcompletion.skip_autocomplete_widget": {
-            "description": "Skip completion if autocomplete widget is active",
+          "skip_autocomplete_widget": {
             "type": "boolean",
-            "default": false
+            "default": false,
+            "description": "Skip completion if autocomplete widget is active"
           },
-          "localcompletion.completion_timeout": {
-            "description": "Minimum time between keystrokes (in ms) before sending a completion request (Reduces API calls, which are closed immedietly after)",
+          "completion_timeout": {
             "type": "number",
-            "default": 300
+            "default": 300,
+            "description": "Minimum time between keystrokes (in ms) before sending a completion request"
           },
-          "localcompletion.add_visible_files": {
-            "description": "Add all visible files to completion context",
+          "add_visible_files": {
             "type": "boolean",
-            "default": true
-          },
-          "localcompletion.context_files": {
-            "description": "List of files to add to completion context (should ussually not be edited manually)",
-            "type": "array",
-            "default": []
-          },
-          "localcompletion.context_gitignore": {
-            "description": "Whether to ignore files in the gitignore for context generation",
-            "type": "boolean",
-            "default": true
+            "default": true,
+            "description": "Add all visible files to completion context"
           }
         }
       }
-    ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
@@ -159,7 +158,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.2",
     "@types/node": "18.x",
-    "@types/vscode": "^1.83.0",
+    "@types/vscode": "^1.96.0",
     "@typescript-eslint/eslint-plugin": "^6.7.3",
     "@typescript-eslint/parser": "^6.7.3",
     "@vscode/test-electron": "^2.3.4",
@@ -172,7 +171,8 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "openai": "^4.14.1",
+    "openai": "^4.80.1",
     "simple-git": "^3.22.0"
   }
 }
+
